@@ -1,14 +1,23 @@
 #!/bin/sh
 
 WPE_URL_FILE="/boot/wpe.txt"
+WPE_COOKIE_FILE="/boot/cookies.db"
 
 start() {
+	mount -r /boot
+	if [ -e "$WPE_COOKIE_FILE" ]; then
+		echo "Copying cookies.db"
+		mkdir -p /root/.cache
+		cp $WPE_COOKIE_FILE /root/.cache/
+	fi
 	echo -n "Starting WPE: "
 	if [ -e "$WPE_URL_FILE" ]; then
 		URL=`head -1 $WPE_URL_FILE`
 		if [ -n "$URL" ]; then
+			echo -n " $URL"
+			sleep 5
 			/usr/bin/wpe --loop $URL &> /dev/null &
-			echo "OK"
+			echo " OK"
 		else
 			echo "NO URL"
 		fi
